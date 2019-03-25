@@ -41,7 +41,7 @@ $VeeamDrive = $DriveLetter.DriveLetter
 
 
   #region: Variables
-$fulluser = "$($GuestOSName)\($USERNAME)"
+$fulluser = "$($GuestOSName)\$($USERNAME)"
 $CatalogPath = "$($VeeamDrive)\VbrCatalog"
 $vPowerPath = "$($VeeamDrive)\vPowerNfs"
 
