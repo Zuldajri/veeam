@@ -93,7 +93,7 @@ $vPowerPath = "$($VeeamDrive)\vPowerNfs"
   ### SQL Express
           ### Info: https://msdn.microsoft.com/en-us/library/ms144259.aspx
           Write-Host "    Installing SQL Express ..." -ForegroundColor Yellow
-          $Arguments = "/HIDECONSOLE /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQLEngine,SNAC_SDK /INSTANCENAME=VEEAMSQL2016 /SQLSVCACCOUNT=`"NT AUTHORITY\SYSTEM`" /SQLSYSADMINACCOUNTS=`"$fulluser`" `"Builtin\Administrators`" /TCPENABLED=1 /NPENABLED=1 /UpdateEnabled=0"
+          $Arguments = "/HIDECONSOLE /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQLEngine,SNAC_SDK /INSTANCENAME=VEEAMSQL2012 /SQLSVCACCOUNT=`"NT AUTHORITY\SYSTEM`" /SQLSYSADMINACCOUNTS=`"$fulluser`" `"Builtin\Administrators`" /TCPENABLED=1 /NPENABLED=1 /UpdateEnabled=0"
           Start-Process "$source\Redistr\x64\SqlExpress\2016SP1\SQLEXPR_x64_ENU.exe" -ArgumentList $Arguments -Wait -NoNewWindow
   
   ## Veeam Backup & Replication
@@ -136,7 +136,7 @@ $vPowerPath = "$($VeeamDrive)\vPowerNfs"
      "VBR_SERVICE_USER=$fulluser"
      "VBR_SERVICE_PASSWORD=$PASSWORD"
      "PF_AD_NFSDATASTORE=$vPowerPath"
-     "VBR_SQLSERVER_SERVER=$env:COMPUTERNAME\VEEAMSQL2016"
+     "VBR_SQLSERVER_SERVER=$env:COMPUTERNAME\VEEAMSQL2012"
  )
  Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
