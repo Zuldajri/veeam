@@ -1,3 +1,14 @@
+[CmdletBinding()]
+
+# Modify the $VCCISOURI with the latest link from https://github.com/exospheredata/veeam#cookbooks 
+
+Param(
+    [string]$VMName, 
+    [string]$GuestOSName,
+    [string]$USERNAME,
+    [string]$PASSWORD
+)
+
 #Variables
 $url = "http://download.veeam.com/VeeamBackup&Replication_9.5.4.2615.Update4.iso"
 $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.3\Downloads\0\VeeamBackupReplication.iso"
@@ -14,4 +25,147 @@ New-Partition -AssignDriveLetter -UseMaximumSize | `
 Format-Volume -FileSystem NTFS -NewFileSystemLabel "datadisk" -Confirm:$false
 
 $iso = Get-ChildItem -Path "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.3\Downloads\0\VeeamBackupReplication.iso"
+Mount-DiskImage $iso.FullName
 
+Write-Output -InputObject "[$($VMName)]:: Installing Veeam Unattended"
+  
+$setup = $(Get-DiskImage -ImagePath $iso.FullName | Get-Volume).DriveLetter +':' 
+$setup
+
+
+$source = $setup
+
+
+$Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
+$VeeamDrive = $DriveLetter.DriveLetter
+
+
+  #region: Variables
+$fulluser = "$($GuestOSName)\($USERNAME)"
+$CatalogPath = "$($VeeamDrive)\VbrCatalog"
+$vPowerPath = "$($VeeamDrive)\vPowerNfs"
+
+ #region: logdir
+ $logdir = "$($VeeamDrive)\logdir"
+ $trash = New-Item -ItemType Directory -path $logdir  -ErrorAction SilentlyContinue
+ #endregion
+
+  ## Global Prerequirements
+  Write-Host "Installing Global Prerequirements ..." -ForegroundColor Yellow
+  ### 2012 System CLR Types
+  Write-Host "    Installing 2012 System CLR Types ..." -ForegroundColor Yellow
+  $MSIArguments = @(
+      "/i"
+      "$source\Redistr\x64\SQLSysClrTypes.msi"
+      "/qn"
+      "/norestart"
+      "/L*v"
+      "$logdir\01_CLR.txt"
+  )
+  Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
+
+  if (Select-String -path "$logdir\01_CLR.txt" -pattern "Installation success or error status: 0.") {
+    Write-Host "    Setup OK" -ForegroundColor Green
+    }
+    else {
+        throw "Setup Failed"
+        }
+
+  ### 2012 Shared management objects
+  Write-Host "    Installing 2012 Shared management objects ..." -ForegroundColor Yellow
+  $MSIArguments = @(
+      "/i"
+      "$source\Redistr\x64\SharedManagementObjects.msi"
+      "/qn"
+      "/norestart"
+      "/L*v"
+      "$logdir\02_Shared.txt"
+  )
+  Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
+
+  if (Select-String -path "$logdir\02_Shared.txt" -pattern "Installation success or error status: 0.") {
+      Write-Host "    Setup OK" -ForegroundColor Green
+      }
+      else {
+          throw "Setup Failed"
+          }
+
+  ### SQL Express
+          ### Info: https://msdn.microsoft.com/en-us/library/ms144259.aspx
+          Write-Host "    Installing SQL Express ..." -ForegroundColor Yellow
+          $Arguments = "/HIDECONSOLE /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQLEngine,SNAC_SDK /INSTANCENAME=VEEAMSQL2016 /SQLSVCACCOUNT=`"NT AUTHORITY\SYSTEM`" /SQLSYSADMINACCOUNTS=`"$fulluser`" `"Builtin\Administrators`" /TCPENABLED=1 /NPENABLED=1 /UpdateEnabled=0"
+          Start-Process "$source\Redistr\x64\SqlExpress\2016SP1\SQLEXPR_x64_ENU.exe" -ArgumentList $Arguments -Wait -NoNewWindow
+  
+  ## Veeam Backup & Replication
+  Write-Host "Installing Veeam Backup & Replication ..." -ForegroundColor Yellow
+  ### Backup Catalog
+  Write-Host "    Installing Backup Catalog ..." -ForegroundColor Yellow
+  $trash = New-Item -ItemType Directory -path $CatalogPath -ErrorAction SilentlyContinue
+  $MSIArguments = @(
+      "/i"
+      "$source\Catalog\VeeamBackupCatalog64.msi"
+      "/qn"
+      "ACCEPT_THIRDPARTY_LICENSES=1"
+      "/L*v"
+      "$logdir\04_Catalog.txt"
+      "VM_CATALOGPATH=$CatalogPath"
+      "VBRC_SERVICE_USER=$fulluser"
+      "VBRC_SERVICE_PASSWORD=$PASSWORD"
+  )
+  Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
+
+  if (Select-String -path "$logdir\04_Catalog.txt" -pattern "Installation success or error status: 0.") {
+      Write-Host "    Setup OK" -ForegroundColor Green
+      }
+      else {
+          throw "Setup Failed"
+          }
+
+
+ ### Backup Server
+ Write-Host "    Installing Backup Server ..." -ForegroundColor Yellow
+ $trash = New-Item -ItemType Directory -path $vPowerPath -ErrorAction SilentlyContinue
+ $MSIArguments = @(
+     "/i"
+     "$source\Backup\Server.x64.msi"
+     "/qn"
+     "ACCEPT_THIRDPARTY_LICENSES=1"
+     "/L*v"
+     "$logdir\05_Backup.txt"
+     "ACCEPTEULA=YES"
+     "VBR_SERVICE_USER=$fulluser"
+     "VBR_SERVICE_PASSWORD=$PASSWORD"
+     "PF_AD_NFSDATASTORE=$vPowerPath"
+     "VBR_SQLSERVER_SERVER=$env:COMPUTERNAME\VEEAMSQL2016"
+ )
+ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
+
+ if (Select-String -path "$logdir\05_Backup.txt" -pattern "Installation success or error status: 0.") {
+     Write-Host "    Setup OK" -ForegroundColor Green
+     }
+     else {
+         throw "Setup Failed"
+         }
+
+ ### Backup Console
+ Write-Host "    Installing Backup Console ..." -ForegroundColor Yellow
+ $MSIArguments = @(
+     "/i"
+     "$source\Backup\Shell.x64.msi"
+     "/qn"
+     "/L*v"
+     "$logdir\06_Console.txt"
+     "ACCEPTEULA=YES"
+     "ACCEPT_THIRDPARTY_LICENSES=1"
+ )
+ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
+
+ if (Select-String -path "$logdir\06_Console.txt" -pattern "Installation success or error status: 0.") {
+     Write-Host "    Setup OK" -ForegroundColor Green
+     }
+     else {
+         throw "Setup Failed"
+         }
+
+
+ 
