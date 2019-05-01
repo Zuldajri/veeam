@@ -1,5 +1,3 @@
-[CmdletBinding()]
-
 # Modify the $url 
 
 #Variables
