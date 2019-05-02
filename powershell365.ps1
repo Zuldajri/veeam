@@ -59,22 +59,22 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
-$fulluser = "$($GuestOSName)\$($USERNAME)"
-$PWord = ConvertTo-SecureString "$PASSWORD" -AsPlainText -Force
+#$fulluser = "$($GuestOSName)\$($USERNAME)"
+#$PWord = ConvertTo-SecureString "$PASSWORD" -AsPlainText -Force
 
-$creds = New-Object -TypeName System.Management.Automation.PSCredential ("$fulluser", $PWord)
+#$creds = New-Object -TypeName System.Management.Automation.PSCredential ("$fulluser", $PWord)
 
-Connect-VBOServer -Credential $creds
+#Connect-VBOServer -Credential $creds
 
 
-$Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
-$VeeamDrive = $DriveLetter.DriveLetter
+#$Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
+#$VeeamDrive = $DriveLetter.DriveLetter
 
-$repo = "$($VeeamDrive)\backup repository"
-New-Item -ItemType Directory -path $repo -ErrorAction SilentlyContinue
+#$repo = "$($VeeamDrive)\backup repository"
+#New-Item -ItemType Directory -path $repo -ErrorAction SilentlyContinue
 
-$proxy = Get-VBOProxy
+#$proxy = Get-VBOProxy
 
-Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
+#Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
 
  
