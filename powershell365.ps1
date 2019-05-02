@@ -2,6 +2,7 @@
 
 Param(
   [string] $USERNAME,
+  [string] $GuestOSName,
   [string] $PASSWORD
  )
 
@@ -58,10 +59,10 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
-$User = "$USERNAME"
+$fulluser = "$($GuestOSName)\$($USERNAME)"
 $PWord = ConvertTo-SecureString -String "$PASSWORD" -AsPlainText -Force
 
-$creds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $User, $PWord
+$creds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $fulluser, $PWord
 
 Connect-VBOServer -Credential $creds
 
