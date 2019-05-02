@@ -1,3 +1,10 @@
+[CmdletBinding()]
+
+Param(
+  [string] $USERNAME,
+  [string] $PASSWORD
+ )
+
 # Modify the $url 
 
 #Variables
@@ -51,7 +58,13 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
-Connect-VBOServer 
+$User = "$USERNAME"
+$PWord = ConvertTo-SecureString -String "$PASSWORD" -AsPlainText -Force
+
+$creds = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $User, $PWord
+
+Connect-VBOServer -Credential $creds
+
 
 $Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
 $VeeamDrive = $DriveLetter.DriveLetter
