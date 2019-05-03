@@ -2,7 +2,6 @@
 
 Param(
   [string] $USERNAME,
-  [string] $GuestOSName,
   [string] $PASSWORD
  )
 
@@ -62,8 +61,7 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 #Create a credential
 #log "Creating credentials"
 $secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
-$AdminUser = "$($GuestOSName)\$($USERNAME)"
-$mycreds = New-Object System.Management.Automation.PSCredential ($AdminUser, $secpasswd)
+$mycreds = New-Object System.Management.Automation.PSCredential("$env:USERDOMAIN\$USERNAME", $secpasswd)
 
 #Impersonate user
 #log "Impersonate user '$AdminUser'"
