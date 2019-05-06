@@ -1,9 +1,9 @@
 [CmdletBinding()]
 
 Param(
-  [string] $USERNAME,
-  [string] $GuestOSName,
-  [string] $PASSWORD
+  [string]$USERNAME,
+  [string]$GuestOSName,
+  [string]$PASSWORD
  )
 
 # Modify the $url 
@@ -62,33 +62,24 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 $fulluser = "$($GuestOSName)\$($USERNAME)"
 
 
-#Configure logging
-function log
-{
-   param([string]$message)
-   "`n`n$(get-date -f o)  $message" 
+#Enable CredSSP	
+Enable-WSManCredSSP -Role Server –Force
+Enable-WSManCredSSP -Role Client -DelegateComputer $GuestOSName -Force
+Enable-PSRemoting –force
+Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
+
+#Set policy "Allow delegating fresh credentials with NTLM-only server authentication" 
+$allowed = @('WSMAN/'+ $GuestOSName)
+$key = 'hklm:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation'
+if (!(Test-Path $key)) {
+	md $key
+}  
+New-ItemProperty -Path $key -Name AllowFreshCredentialsWhenNTLMOnly  -Value 1 -PropertyType Dword -Force    
+$key = Join-Path $key 'AllowFreshCredentialsWhenNTLMOnly'
+if (!(Test-Path $key)) {
+	md $key
 }
-
-try
-{
-	#Enable CredSSP	
-	Enable-WSManCredSSP -Role Server –Force
-	Enable-WSManCredSSP -Role Client -DelegateComputer $GuestOSName -Force
-	Enable-PSRemoting –force
-	Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
-
-	#Set policy "Allow delegating fresh credentials with NTLM-only server authentication" 
-	$allowed = @('WSMAN/'+ $GuestOSName)
-	$key = 'hklm:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation'
-	if (!(Test-Path $key)) {
-		md $key
-	}  
-	New-ItemProperty -Path $key -Name AllowFreshCredentialsWhenNTLMOnly  -Value 1 -PropertyType Dword -Force    
-	$key = Join-Path $key 'AllowFreshCredentialsWhenNTLMOnly'
-	if (!(Test-Path $key)) {
-		md $key
-	}
-	$i = 1
+$i = 1
 	$allowed |% {
 		# Script does not take into account existing entries in this key
 		New-ItemProperty -Path $key -Name $i -Value $_ -PropertyType String -Force
