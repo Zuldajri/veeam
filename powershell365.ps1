@@ -2,6 +2,7 @@
 
 Param(
   [string] $USERNAME,
+  [string]$GuestOSName,
   [string] $PASSWORD
  )
 
