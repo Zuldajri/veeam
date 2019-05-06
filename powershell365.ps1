@@ -128,8 +128,6 @@ catch
 }
 finally
 {
-    log "End Impersonate user '$AdminUser'"
-    remove-ImpersonateUser
     log "All Done"
 }
 
