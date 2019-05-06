@@ -6,8 +6,16 @@ Param(
   [string]$PASSWORD
  )
 
-# Modify the $url 
+#Configure logging
+function log
+{
+   param([string]$message)
+   "`n`n$(get-date -f o)  $message" 
+}
 
+try
+{
+# Modify the $url 
 #Variables
 $url = "http://download.veeam.com/VeeamBackupOffice365_3.0.0.422.zip"
 $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.3\Downloads\0\VeeamBackupOffice365_3.0.0.422.zip"
@@ -112,7 +120,18 @@ $session = New-PSSession -cn $env:computername -Credential $mycreds -Authenticat
 	Invoke-Command -Session $session -ScriptBlock $scriptblock
 	Remove-PSSession -VMName $env:computername
 
-
+}
+catch
+{
+    log "ERROR: Exception caught - '$_.Exception.Message' - '$_.Exception.ItemName'"
+    throw
+}
+finally
+{
+    log "End Impersonate user '$AdminUser'"
+    remove-ImpersonateUser
+    log "All Done"
+}
 
 
  
