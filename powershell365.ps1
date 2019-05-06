@@ -69,6 +69,7 @@ $mycreds = New-Object System.Management.Automation.PSCredential($fulluser, $secp
 #log "Impersonate user '$AdminUser'"
 #.\New-ImpersonateUser.ps1 -Credential $mycreds
 
+Import-Module Veeam.Archiver.PowerShell
 
 Connect-VBOServer -Credential $mycreds
 $Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
