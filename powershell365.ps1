@@ -73,12 +73,12 @@ try
 {
 	#Enable CredSSP	
 	Enable-WSManCredSSP -Role Server –Force
-	Enable-WSManCredSSP -Role Client -DelegateComputer ("*."+$adDomainName) -Force
+	Enable-WSManCredSSP -Role Client -DelegateComputer $GuestOSName -Force
 	Enable-PSRemoting –force
 	Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
 
 	#Set policy "Allow delegating fresh credentials with NTLM-only server authentication" 
-	$allowed = @('WSMAN/*.'+ $adDomainName)
+	$allowed = @('WSMAN/'+ $GuestOSName)
 	$key = 'hklm:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation'
 	if (!(Test-Path $key)) {
 		md $key
@@ -97,17 +97,12 @@ try
 
     #Create a credential
     log "Creating credentials"
-    $secpasswd = ConvertTo-SecureString $adminPassword -AsPlainText -Force
-    $AdminUser = $adminUsername + "@" + $adDomainName
-    $mycreds = New-Object System.Management.Automation.PSCredential ($AdminUser, $secpasswd)
+    $secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
+    $mycreds = New-Object System.Management.Automation.PSCredential ($fulluser, $secpasswd)
 
     #Impersonate user
-    log "Impersonate user '$AdminUser'"
+    log "Impersonate user '$fulluser'"
     .\New-ImpersonateUser.ps1 -Credential $mycreds
-
-
-
-
 
 
 Connect-VBOServer 
