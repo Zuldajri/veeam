@@ -59,17 +59,58 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
-#Create a credential
-#log "Creating credentials"
-$secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
-$mycreds = New-Object System.Management.Automation.PSCredential("$env:USERDOMAIN\$USERNAME", $secpasswd)
-
-#Impersonate user
-#log "Impersonate user '$AdminUser'"
-#.\New-ImpersonateUser.ps1 -Credential $mycreds
+$fulluser = "$($GuestOSName)\$($USERNAME)"
 
 
-Connect-VBOServer -Credential $mycreds
+#Configure logging
+function log
+{
+   param([string]$message)
+   "`n`n$(get-date -f o)  $message" 
+}
+
+try
+{
+	#Enable CredSSP	
+	Enable-WSManCredSSP -Role Server –Force
+	Enable-WSManCredSSP -Role Client -DelegateComputer ("*."+$adDomainName) -Force
+	Enable-PSRemoting –force
+	Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
+
+	#Set policy "Allow delegating fresh credentials with NTLM-only server authentication" 
+	$allowed = @('WSMAN/*.'+ $adDomainName)
+	$key = 'hklm:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation'
+	if (!(Test-Path $key)) {
+		md $key
+	}  
+	New-ItemProperty -Path $key -Name AllowFreshCredentialsWhenNTLMOnly  -Value 1 -PropertyType Dword -Force    
+	$key = Join-Path $key 'AllowFreshCredentialsWhenNTLMOnly'
+	if (!(Test-Path $key)) {
+		md $key
+	}
+	$i = 1
+	$allowed |% {
+		# Script does not take into account existing entries in this key
+		New-ItemProperty -Path $key -Name $i -Value $_ -PropertyType String -Force
+		$i++
+	}
+
+    #Create a credential
+    log "Creating credentials"
+    $secpasswd = ConvertTo-SecureString $adminPassword -AsPlainText -Force
+    $AdminUser = $adminUsername + "@" + $adDomainName
+    $mycreds = New-Object System.Management.Automation.PSCredential ($AdminUser, $secpasswd)
+
+    #Impersonate user
+    log "Impersonate user '$AdminUser'"
+    .\New-ImpersonateUser.ps1 -Credential $mycreds
+
+
+
+
+
+
+Connect-VBOServer 
 $Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
 $VeeamDrive = $DriveLetter.DriveLetter
 $repo = "$($VeeamDrive)\backup repository"
