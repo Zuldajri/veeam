@@ -61,7 +61,7 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
 #Create a credential
 #log "Creating credentials"
-$fulluser = "localhost\$($USERNAME)"
+$fulluser = "$($GuestOSName)\$($USERNAME)"
 $secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential($fulluser, $secpasswd)
 
