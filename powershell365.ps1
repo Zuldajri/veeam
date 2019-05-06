@@ -72,7 +72,7 @@ $fulluser = "$($GuestOSName)\$($USERNAME)"
 
 #Enable CredSSP	
 Enable-WSManCredSSP -Role Server –Force
-Enable-WSManCredSSP -Role Client -DelegateComputer $GuestOSName -Force
+#Enable-WSManCredSSP -Role Client -DelegateComputer $GuestOSName -Force
 Enable-PSRemoting –force
 Set-Item WSMan:\localhost\Client\TrustedHosts * -Force
 
