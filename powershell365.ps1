@@ -96,16 +96,21 @@ $i = 1
     .\New-ImpersonateUser.ps1 -Credential $mycreds
 
 
-Connect-VBOServer 
 $Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
 $VeeamDrive = $DriveLetter.DriveLetter
 $repo = "$($VeeamDrive)\backup repository"
 New-Item -ItemType Directory -path $repo -ErrorAction SilentlyContinue
-$proxy = Get-VBOProxy
 
-Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
   
+$scriptblock= {
+Connect-VBOServer
+$proxy = Get-VBOProxy 
+Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
+}
 
+$session = New-PSSession -cn $env:computername -Credential $mycreds -Authentication Credssp
+	Invoke-Command -Session $session -ScriptBlock $scriptblock
+	Remove-PSSession -VMName $env:computername
 
 
 
