@@ -61,13 +61,13 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
 #Create a credential
 #log "Creating credentials"
-$fulluser = "$($GuestOSName)\$($USERNAME)"
+$fulluser = "localhost\$($USERNAME)"
 $secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential($fulluser, $secpasswd)
 
 #Impersonate user
 #log "Impersonate user '$AdminUser'"
-.\New-ImpersonateUser.ps1 -Credential $mycreds
+#.\New-ImpersonateUser.ps1 -Credential $mycreds
 
 
 Connect-VBOServer -Credential $mycreds
