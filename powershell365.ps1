@@ -78,6 +78,8 @@ New-Item -ItemType Directory -path $repo -ErrorAction SilentlyContinue
 $scriptblock= {
 Import-Module Veeam.Archiver.PowerShell
 Connect-VBOServer
+$repository = Get-VBORepository -Name "Default Backup Repository"
+Remove-VBORepository -Repository $repository
 $proxy = Get-VBOProxy 
 Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
 }
