@@ -167,7 +167,7 @@ $vPowerPath = "$($VeeamDrive)\vPowerNfs"
          throw "Setup Failed"
          }
 
-Start-Sleep -s 15
+
 
 ### Explorers
 Write-Host " Installing Explorer For ActiveDirectory ..." -ForegroundColor Yellow
