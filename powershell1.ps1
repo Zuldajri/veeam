@@ -249,6 +249,6 @@ throw "Setup Failed"
 
 
 ### Update 4a
-#Write-Host "Installing Update 4a..." -ForegroundColor Yellow
-#$Arguments = "/silent /noreboot /log $logdir\15_update.txt VBR_AUTO_UPGRADE=1"
-#Start-Process "$source\Updates\veeam_backup_9.5.4.2753.update4a_setup.exe" -ArgumentList $Arguments -Wait -NoNewWindow
+Write-Host "Installing Update 4a..." -ForegroundColor Yellow
+$Arguments = "/silent /noreboot /log $logdir\15_update.txt VBR_AUTO_UPGRADE=1"
+Start-Process "$source\Updates\veeam_backup_9.5.4.2866.update4b_setup.exe" -ArgumentList $Arguments -Wait -NoNewWindow
