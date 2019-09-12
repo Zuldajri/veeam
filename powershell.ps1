@@ -10,7 +10,7 @@ Param(
 )
 
 #Variables
-$url = "http://download.veeam.com/VeeamBackup&Replication_9.5.4.2866.Update4b_.iso"
+$url = "http://download.veeam.com/VeeamBackup&Replication_9.5.4.2753.Update4a.iso"
 $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\VeeamBackupReplication.iso"
 
 #Get VCC iso
@@ -248,7 +248,7 @@ throw "Setup Failed"
 
 
 
-### Update 4b
-Write-Host "Installing Update 4b..." -ForegroundColor Yellow
+### Update 4a
+Write-Host "Installing Update 4a..." -ForegroundColor Yellow
 $Arguments = "/silent /noreboot /log $logdir\15_update.txt VBR_AUTO_UPGRADE=1"
-Start-Process "$source\Updates\veeam_backup_9.5.4.2866.update4b_setup.exe" -ArgumentList $Arguments -Wait -NoNewWindow
+Start-Process "$source\Updates\veeam_backup_9.5.4.2753.update4a_setup.exe" -ArgumentList $Arguments -Wait -NoNewWindow
