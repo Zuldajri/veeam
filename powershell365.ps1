@@ -24,7 +24,7 @@ Format-Volume -FileSystem NTFS -NewFileSystemLabel "datadisk" -Confirm:$false
 
 Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\VeeamBackupOffice365_3.0.0.422.zip -DestinationPath C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\ -Force
 
-$source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\"
+$source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0"
 
 ### Veeam Backup Office 365
 $MSIArguments = @(
