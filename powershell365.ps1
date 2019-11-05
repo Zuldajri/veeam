@@ -10,7 +10,7 @@ Param(
 
 #Variables
 $url = "http://download.veeam.com/VeeamBackupOffice365_3.0.0.422.zip"
-$output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\VeeamBackupOffice365_3.0.0.422.zip"
+$output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.10.2\Downloads\0\VeeamBackupOffice365_3.0.0.422.zip"
 
 #Get Veeam Backup for Office 365 zip
 (New-Object System.Net.WebClient).DownloadFile($url, $output)
@@ -22,9 +22,9 @@ Initialize-Disk -PartitionStyle MBR -PassThru | `
 New-Partition -AssignDriveLetter -UseMaximumSize | ` 
 Format-Volume -FileSystem NTFS -NewFileSystemLabel "datadisk" -Confirm:$false
 
-Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\VeeamBackupOffice365_3.0.0.422.zip -DestinationPath C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\ -Force
+Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.10.2\Downloads\0\VeeamBackupOffice365_3.0.0.422.zip -DestinationPath C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\ -Force
 
-$source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0"
+$source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.10.2\Downloads\0"
 
 ### Veeam Backup Office 365
 $MSIArguments = @(
