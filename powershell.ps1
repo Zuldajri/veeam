@@ -11,7 +11,7 @@ Param(
 
 #Variables
 $url = "http://download.veeam.com/VeeamBackup&Replication_9.5.4.2866.Update4b_.iso"
-$output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\VeeamBackupReplication.iso"
+$output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupReplication.iso"
 
 #Get VCC iso
 (New-Object System.Net.WebClient).DownloadFile($url, $output)
@@ -24,7 +24,7 @@ Initialize-Disk -PartitionStyle MBR -PassThru | `
 New-Partition -AssignDriveLetter -UseMaximumSize | ` 
 Format-Volume -FileSystem NTFS -NewFileSystemLabel "datadisk" -Confirm:$false
 
-$iso = Get-ChildItem -Path "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\1.9.5\Downloads\0\VeeamBackupReplication.iso"
+$iso = Get-ChildItem -Path "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupReplication.iso"
 Mount-DiskImage $iso.FullName
 
 Write-Output -InputObject "[$($VMName)]:: Installing Veeam Unattended"
