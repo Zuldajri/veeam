@@ -9,8 +9,8 @@ Param(
 # Modify the $url 
 
 #Variables
-$url = "http://download.veeam.com/VeeamBackupOffice365_3.0.0.422.zip"
-$output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupOffice365_3.0.0.422.zip"
+$url = "http://download.veeam.com/VeeamBackupOffice365_4.0.0.1345.zip"
+$output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupOffice365_4.0.0.1345.zip"
 
 #Get Veeam Backup for Office 365 zip
 (New-Object System.Net.WebClient).DownloadFile($url, $output)
@@ -22,7 +22,7 @@ Initialize-Disk -PartitionStyle MBR -PassThru | `
 New-Partition -AssignDriveLetter -UseMaximumSize | ` 
 Format-Volume -FileSystem NTFS -NewFileSystemLabel "datadisk" -Confirm:$false
 
-Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupOffice365_3.0.0.422.zip -DestinationPath C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\ -Force
+Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupOffice365_4.0.0.1345.zip -DestinationPath C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\ -Force
 
 $source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension"
 
