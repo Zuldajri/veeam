@@ -29,7 +29,7 @@ $source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension"
 ### Veeam Backup Office 365
 $MSIArguments = @(
 "/i"
-"$source\VeeamBackupOffice365_4.0.0.1345.msi"
+"$source\Veeam.Backup365_4.0.0.1345.msi"
 "/qn"
 "ADDLOCAL=BR_OFFICE365,CONSOLE_OFFICE365,PS_OFFICE365"
 "ACCEPT_THIRDPARTY_LICENSES=1"
