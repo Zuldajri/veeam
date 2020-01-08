@@ -29,7 +29,7 @@ $source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension"
 ### Veeam Backup Office 365
 $MSIArguments = @(
 "/i"
-"$source\Veeam.Backup365_3.0.0.422.msi"
+"$source\VeeamBackupOffice365_4.0.0.1345.msi"
 "/qn"
 "ADDLOCAL=BR_OFFICE365,CONSOLE_OFFICE365,PS_OFFICE365"
 "ACCEPT_THIRDPARTY_LICENSES=1"
@@ -40,7 +40,7 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 ### Veeam Explorer for Microsoft Exchange
 $MSIArguments = @(
 "/i"
-"$source\VeeamExplorerForExchange_3.0.0.422.msi"
+"$source\VeeamExplorerForExchange_4.0.0.1345.msi"
 "/qn"
 "ADDLOCAL=BR_EXCHANGEEXPLORER,PS_EXCHANGEEXPLORER"
 "ACCEPT_THIRDPARTY_LICENSES=1"
@@ -51,7 +51,7 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 ### Veeam Explorer for Microsoft SharePoint
 $MSIArguments = @(
 "/i"
-"$source\VeeamExplorerForSharePoint_3.0.0.422.msi"
+"$source\VeeamExplorerForSharePoint_4.0.0.1345.msi"
 "/qn"
 "ADDLOCAL=BR_SHAREPOINTEXPLORER,PS_SHAREPOINTEXPLORER"
 "ACCEPT_THIRDPARTY_LICENSES=1"
