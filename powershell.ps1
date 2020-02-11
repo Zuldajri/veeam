@@ -20,9 +20,9 @@ Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 #Initialize Data Disks
 Get-Disk | ` 
 Where partitionstyle -eq 'raw' | ` 
-Initialize-Disk -PartitionStyle MBR -PassThru | ` 
+Initialize-Disk -PartitionStyle GPT -PassThru | ` 
 New-Partition -AssignDriveLetter -UseMaximumSize | ` 
-Format-Volume -FileSystem NTFS -NewFileSystemLabel "datadisk" -Confirm:$false
+Format-Volume -FileSystem ReFS -NewFileSystemLabel "datadisk" -Confirm:$false
 
 $iso = Get-ChildItem -Path "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupReplication.iso"
 Mount-DiskImage $iso.FullName
