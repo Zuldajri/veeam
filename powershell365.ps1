@@ -18,9 +18,9 @@ $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBack
 #Initialize Data Disks
 Get-Disk | ` 
 Where partitionstyle -eq 'raw' | ` 
-Initialize-Disk -PartitionStyle MBR -PassThru | ` 
+Initialize-Disk -PartitionStyle GPT -PassThru | ` 
 New-Partition -AssignDriveLetter -UseMaximumSize | ` 
-Format-Volume -FileSystem NTFS -NewFileSystemLabel "datadisk" -Confirm:$false
+Format-Volume -FileSystem ReFS -NewFileSystemLabel "datadisk" -Confirm:$false
 
 Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupOffice365_4.0.0.1345.zip -DestinationPath C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\ -Force
 
