@@ -71,7 +71,7 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
-Write-Host "Post-install Configuration"
+Write-Host "Post install Configuration"
 #Create a credential
 #log "Creating credentials"
 $fulluser = "$($GuestOSName)\$($USERNAME)"
