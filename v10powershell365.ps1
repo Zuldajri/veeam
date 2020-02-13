@@ -1,8 +1,9 @@
 [CmdletBinding()]
 
 Param(
+  [string] $GuestOSName,
+  [string] $StorageAccountName,  
   [string] $USERNAME,
-  [string] $GuestOSName,  
   [string] $PASSWORD
  )
 
