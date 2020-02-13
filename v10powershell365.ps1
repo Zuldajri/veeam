@@ -35,7 +35,7 @@ Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\Veeam
 
 $source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension"
 
-Write-Host "Install Veeam Backup for Office 365 and Veeam Explorers"
+Write-Host "Install Veeam Backup for Office 365"
 ### Veeam Backup Office 365
 $MSIArguments = @(
 "/i"
@@ -47,6 +47,7 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
+Write-Host "Install Veeam Explorer for Exchange"
 ### Veeam Explorer for Microsoft Exchange
 $MSIArguments = @(
 "/i"
@@ -58,6 +59,7 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
+Write-Host "Install Veeam Explorer for Sharepoint"
 ### Veeam Explorer for Microsoft SharePoint
 $MSIArguments = @(
 "/i"
@@ -73,14 +75,22 @@ Write-Host "Post-install Configuration"
 #Create a credential
 #log "Creating credentials"
 $fulluser = "$($GuestOSName)\$($USERNAME)"
+Write-Host "1"
 $secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
+Write-Host "2"
 $mycreds = New-Object System.Management.Automation.PSCredential($fulluser, $secpasswd)
+Write-Host "3"
 $seckey = ConvertTo-SecureString $StorageAccountKey -AsPlainText -Force
+Write-Host "4"
+
+
 
 $Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | where-object {$_.DriveLetter -like "F*"}
 $VeeamDrive = $DriveLetter.DriveLetter
 $repo = "$($VeeamDrive)\backup repository"
 New-Item -ItemType Directory -path $repo -ErrorAction SilentlyContinue
+Write-Host "5"
+
 
 $scriptblock= {
 Import-Module Veeam.Archiver.PowerShell
@@ -89,6 +99,13 @@ $proxy = Get-VBOProxy
 Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
 $repository = Get-VBORepository -Name "Default Backup Repository"
 Remove-VBORepository -Repository $repository -Confirm:$false
+Add-VBOAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:seckey
+$account = Get-VBOAzureBlobAccount 
+$connection = New-VBOAzureBlobConnectionSettings -Account $account -RegionType Global
+$container = Get-VBOAzureBlobContainer -ConnectionSettings $connection
+Add-VBOAzureBlobFolder -Container $container -Name "Veeam"
+$folder = Get-VBOAzureBlobFolder -Container $container
+Add-VBOAzureBlobObjectStorageRepository -Folder $folder -Name "VBORepository"
 }
 
 $session = New-PSSession -cn $env:computername -Credential $mycreds 
