@@ -89,13 +89,6 @@ $proxy = Get-VBOProxy
 Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
 $repository = Get-VBORepository -Name "Default Backup Repository"
 Remove-VBORepository -Repository $repository -Confirm:$false
-Add-VBOAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:seckey
-$account = Get-VBOAzureBlobAccount 
-$connection = New-VBOAzureBlobConnectionSettings -Account $account -RegionType Global
-$container = Get-VBOAzureBlobContainer -ConnectionSettings $connection
-Add-VBOAzureBlobFolder -Container $container -Name "Veeam"
-$folder = Get-VBOAzureBlobFolder -Container $container
-Add-VBOAzureBlobObjectStorageRepository -Folder $folder -Name "VBORepository"
 }
 
 $session = New-PSSession -cn $env:computername -Credential $mycreds 
