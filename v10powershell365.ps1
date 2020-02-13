@@ -8,8 +8,14 @@ Param(
   [string] $PASSWORD
  )
 
-# Modify the $url 
+$Date = Get-Date -Format "yyyy-MM-dd HHmmss"
+Start-Transcript -path "$UserDesktopPath\configure-worker $Date.log" -append
+Write-Host "StorageAccountName = $StorageAccountName"
+Write-Host "StorageAccountKey = $StorageAccountKey"
 
+
+# Modify the $url 
+Write-Host "Downloading Veeam Backup for Office 365"
 #Variables
 $url = "http://download.veeam.com/VeeamBackupOffice365_4.0.0.2516.zip"
 $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupOffice365_4.0.0.2516.zip"
@@ -17,6 +23,7 @@ $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBack
 #Get Veeam Backup for Office 365 zip
 (New-Object System.Net.WebClient).DownloadFile($url, $output)
 
+Write-Host "Initialize Data Disks"
 #Initialize Data Disks
 Get-Disk | ` 
 Where partitionstyle -eq 'raw' | ` 
@@ -28,6 +35,7 @@ Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\Veeam
 
 $source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension"
 
+Write-Host "Install Veeam Backup for Office 365 and Veeam Explorers"
 ### Veeam Backup Office 365
 $MSIArguments = @(
 "/i"
@@ -61,6 +69,7 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
+Write-Host "Post-install Configuration"
 #Create a credential
 #log "Creating credentials"
 $fulluser = "$($GuestOSName)\$($USERNAME)"
