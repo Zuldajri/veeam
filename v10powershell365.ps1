@@ -74,14 +74,13 @@ $repo = "$($VeeamDrive)\backup repository"
 New-Item -ItemType Directory -path $repo -ErrorAction SilentlyContinue
 
 $scriptblock= {
-param($StorageAccountName,$seckey)
 Import-Module Veeam.Archiver.PowerShell
 Connect-VBOServer
 $proxy = Get-VBOProxy 
 Add-VBORepository -Proxy $proxy -Name "Default Backup Repository 1" -Path "F:\backup repository" -Description "Default Backup Repository 1" -RetentionType ItemLevel
 $repository = Get-VBORepository -Name "Default Backup Repository"
 Remove-VBORepository -Repository $repository -Confirm:$false
-Add-VBOAzureBlobAccount -Name $($StorageAccountName) -SharedKey $($seckey)
+Add-VBOAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:seckey
 $account = Get-VBOAzureBlobAccount 
 $connection = New-VBOAzureBlobConnectionSettings -Account $account -RegionType Global
 $container = Get-VBOAzureBlobContainer -ConnectionSettings $connection
@@ -91,5 +90,5 @@ Add-VBOAzureBlobObjectStorageRepository -Folder $folder -Name "VBORepository"
 }
 
 $session = New-PSSession -cn $env:computername -Credential $mycreds 
-	Invoke-Command -Session $session -ScriptBlock $scriptblock -ArgumentList $StorageAccountName,$seckey
+	Invoke-Command -Session $session -ScriptBlock $scriptblock 
 	Remove-PSSession -VMName $env:computername
