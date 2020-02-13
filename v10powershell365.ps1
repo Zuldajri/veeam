@@ -85,6 +85,7 @@ Add-VBOAzureBlobAccount -Name $StorageAccountName -SharedKey $seckey
 $account = Get-VBOAzureBlobAccount 
 $connection = New-VBOAzureBlobConnectionSettings -Account $account -RegionType Global
 $container = Get-VBOAzureBlobContainer -ConnectionSettings $connection
+Add-VBOAzureBlobFolder -Container $container -Name "Veeam"
 $folder = Get-VBOAzureBlobFolder -Container $container
 Add-VBOAzureBlobObjectStorageRepository -Folder $folder -Name "VBORepository"
 }
