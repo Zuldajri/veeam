@@ -61,15 +61,15 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
 Write-Host "Install Veeam Explorer for Sharepoint"
 ### Veeam Explorer for Microsoft SharePoint
-$MSIArguments = @(
-"/i"
-"$source\VeeamExplorerForSharePoint_10.0.0.443.msi"
-"/qn"
-"ADDLOCAL=BR_SHAREPOINTEXPLORER,PS_SHAREPOINTEXPLORER"
-"ACCEPT_THIRDPARTY_LICENSES=1"
-"ACCEPT_EULA=1"
-)
-Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
+#$MSIArguments = @(
+#"/i"
+#"$source\VeeamExplorerForSharePoint_10.0.0.443.msi"
+#"/qn"
+#"ADDLOCAL=BR_SHAREPOINTEXPLORER,PS_SHAREPOINTEXPLORER"
+#"ACCEPT_THIRDPARTY_LICENSES=1"
+#"ACCEPT_EULA=1"
+#)
+#Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
 Write-Host "Post install Configuration"
 #Create a credential
