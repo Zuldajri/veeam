@@ -47,6 +47,8 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
+Sleep 60
+
 Write-Host "Install Veeam Explorer for Exchange"
 ### Veeam Explorer for Microsoft Exchange
 $MSIArguments = @(
@@ -59,6 +61,8 @@ $MSIArguments = @(
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
+Sleep 60
+
 Write-Host "Install Veeam Explorer for Sharepoint"
 ### Veeam Explorer for Microsoft SharePoint
 $MSIArguments = @(
@@ -70,6 +74,8 @@ $MSIArguments = @(
 "ACCEPT_EULA=1"
 )
 Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
+
+Sleep 60
 
 Write-Host "Post install Configuration"
 #Create a credential
