@@ -41,6 +41,7 @@ $MSIArguments = @(
 "/i"
 "$source\Veeam.Backup365_4.0.0.2516.msi"
 "/qn"
+"/norestart"
 "ADDLOCAL=BR_OFFICE365,CONSOLE_OFFICE365,PS_OFFICE365"
 "ACCEPT_THIRDPARTY_LICENSES=1"
 "ACCEPT_EULA=1"
@@ -55,6 +56,7 @@ $MSIArguments = @(
 "/i"
 "$source\VeeamExplorerForExchange_10.0.0.443.msi"
 "/qn"
+"/norestart"
 "ADDLOCAL=BR_EXCHANGEEXPLORER,PS_EXCHANGEEXPLORER"
 "ACCEPT_THIRDPARTY_LICENSES=1"
 "ACCEPT_EULA=1"
@@ -69,6 +71,7 @@ $MSIArguments = @(
 "/i"
 "$source\VeeamExplorerForSharePoint_10.0.0.443.msi"
 "/qn"
+"/norestart"
 "ADDLOCAL=BR_SHAREPOINTEXPLORER,PS_SHAREPOINTEXPLORER"
 "ACCEPT_THIRDPARTY_LICENSES=1"
 "ACCEPT_EULA=1"
@@ -81,13 +84,10 @@ Write-Host "Post install Configuration"
 #Create a credential
 #log "Creating credentials"
 $fulluser = "$($GuestOSName)\$($USERNAME)"
-Write-Host "1"
 $secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
-Write-Host "2"
 $mycreds = New-Object System.Management.Automation.PSCredential($fulluser, $secpasswd)
-Write-Host "3"
 $seckey = ConvertTo-SecureString $StorageAccountKey -AsPlainText -Force
-Write-Host "4"
+
 
 
 
