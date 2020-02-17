@@ -8,14 +8,8 @@ Param(
   [string] $PASSWORD
  )
 
-$Date = Get-Date -Format "yyyy-MM-dd HHmmss"
-Start-Transcript -path "$UserDesktopPath\configure-worker $Date.log" -append
-Write-Host "StorageAccountName = $StorageAccountName"
-Write-Host "StorageAccountKey = $StorageAccountKey"
-
 
 # Modify the $url 
-Write-Host "Downloading Veeam Backup for Office 365"
 #Variables
 $url = "http://download.veeam.com/VeeamBackupOffice365_4.0.0.2516.zip"
 $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBackupOffice365_4.0.0.2516.zip"
@@ -23,7 +17,7 @@ $output = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\VeeamBack
 #Get Veeam Backup for Office 365 zip
 (New-Object System.Net.WebClient).DownloadFile($url, $output)
 
-Write-Host "Initialize Data Disks"
+
 #Initialize Data Disks
 Get-Disk | ` 
 Where partitionstyle -eq 'raw' | ` 
@@ -35,7 +29,6 @@ Expand-Archive C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension\Veeam
 
 $source = "C:\Packages\Plugins\Microsoft.Compute.CustomScriptExtension"
 
-Write-Host "Install Veeam Backup for Office 365"
 ### Veeam Backup Office 365
 $MSIArguments = @(
 "/i"
@@ -50,7 +43,6 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
 Sleep 60
 
-Write-Host "Install Veeam Explorer for Exchange"
 ### Veeam Explorer for Microsoft Exchange
 $MSIArguments = @(
 "/i"
@@ -65,7 +57,7 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
 Sleep 60
 
-Write-Host "Install Veeam Explorer for Sharepoint"
+
 ### Veeam Explorer for Microsoft SharePoint
 $MSIArguments = @(
 "/i"
@@ -80,7 +72,7 @@ Start-Process "msiexec.exe" -ArgumentList $MSIArguments -Wait -NoNewWindow
 
 Sleep 60
 
-Write-Host "Post install Configuration"
+
 #Create a credential
 #log "Creating credentials"
 $fulluser = "$($GuestOSName)\$($USERNAME)"
@@ -95,7 +87,7 @@ $Driveletter = get-wmiobject -class "Win32_Volume" -namespace "root\cimv2" | whe
 $VeeamDrive = $DriveLetter.DriveLetter
 $repo = "$($VeeamDrive)\backup repository"
 New-Item -ItemType Directory -path $repo -ErrorAction SilentlyContinue
-Write-Host "5"
+
 
 
 $scriptblock= {
