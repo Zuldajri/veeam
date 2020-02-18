@@ -261,9 +261,12 @@ Add-VBRAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:seckey
 $account = Get-VBRAzureBlobAccount 
 $connect = Connect-VBRAzureBlobService -Account $account -RegionType Global
 $container = Get-VBRAzureBlobContainer -Connection $connect
-New-VBRAzureBlobFolder -Container $container -Connection $connect -Name "Veeam"
-$folder = Get-VBRAzureBlobFolder -Container $container -Connection $connect
-Add-VBRAzureBlobRepository -AzureBlobFolder $folder -Connection $connect
+New-VBRAzureBlobFolder -Container $container -Connection $connect -Name "VeeamObject"
+New-VBRAzureBlobFolder -Container $container -Connection $connect -Name "VeeamExternal"
+$folder1 = Get-VBRAzureBlobFolder -Container $container -Connection $connect -Name "VeeamObject"
+$folder2 = Get-VBRAzureBlobFolder -Container $container -Connection $connect -Name "VeeamExternal"
+Add-VBRAzureBlobRepository -AzureBlobFolder $folder1 -Connection $connect
+Add-VBRAzureExternalRepository -Name "AzureExternalRepo" -Description "New external repository" -AzureBlobFolder $folder2 -Connection $connect
 }
 
 $session = New-PSSession -cn $env:computername -Credential $mycreds 
