@@ -25,7 +25,7 @@ Where partitionstyle -eq 'raw' | `
 Initialize-Disk -PartitionStyle GPT -PassThru | ` 
 New-Partition -AssignDriveLetter -UseMaximumSize | ` 
 Format-Volume -FileSystem ReFS -NewFileSystemLabel "datadisk" -Confirm:$false
-###ReFS ?
+
 
 
 
@@ -47,6 +47,9 @@ $VeeamDrive = $DriveLetter.DriveLetter
 
   #region: Variables
 $fulluser = "$($GuestOSName)\$($USERNAME)"
+$secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
+$mycreds = New-Object System.Management.Automation.PSCredential($fulluser, $secpasswd)
+$seckey = ConvertTo-SecureString $StorageAccountKey -AsPlainText -Force
 $CatalogPath = "$($VeeamDrive)\VbrCatalog"
 $vPowerPath = "$($VeeamDrive)\vPowerNfs"
 
@@ -250,3 +253,19 @@ Write-Host " Setup OK" -ForegroundColor Green
 else {
 throw "Setup Failed"
 }
+
+$scriptblock= {
+Add-PSSnapin VeeamPSSnapin
+Connect-VBRServer
+Add-VBRAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:seckey
+$account = Get-VBRAzureBlobAccount 
+$connect = Connect-VBRAzureBlobService -Account $account -RegionType Global
+$container = Get-VBRAzureBlobContainer -Connection $connect
+New-VBRAzureBlobFolder -Container $container -Connection $connect -Name "Veeam"
+$folder = Get-VBRAzureBlobFolder -Container $container -Connection $connect
+Add-VBRAzureBlobRepository -AzureBlobFolder $folder -Connection $connect
+}
+
+$session = New-PSSession -cn $env:computername -Credential $mycreds 
+	Invoke-Command -Session $session -ScriptBlock $scriptblock 
+	Remove-PSSession -VMName $env:computername
