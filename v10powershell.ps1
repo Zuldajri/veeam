@@ -49,6 +49,7 @@ $VeeamDrive = $DriveLetter.DriveLetter
 $fulluser = "$($GuestOSName)\$($USERNAME)"
 $secpasswd = ConvertTo-SecureString $PASSWORD -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential($fulluser, $secpasswd)
+$seckey = ConvertTo-SecureString $StorageAccountKey -AsPlainText -Force
 $CatalogPath = "$($VeeamDrive)\VbrCatalog"
 $vPowerPath = "$($VeeamDrive)\vPowerNfs"
 
@@ -256,7 +257,7 @@ throw "Setup Failed"
 $scriptblock= {
 Add-PSSnapin VeeamPSSnapin
 Connect-VBRServer
-Add-VBRAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:StorageAccountKey
+Add-VBRAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:seckey
 $account = Get-VBRAzureBlobAccount 
 $connect = Connect-VBRAzureBlobService -Account $account -RegionType Global
 $container = Get-VBRAzureBlobContainer -Connection $connect
