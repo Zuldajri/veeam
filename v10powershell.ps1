@@ -259,7 +259,7 @@ Connect-VBRServer
 Add-VBRAzureBlobAccount -Name $Using:StorageAccountName -SharedKey $Using:StorageAccountKey
 $account = Get-VBRAzureBlobAccount 
 $connect = Connect-VBRAzureBlobService -Account $account -RegionType Global
-$container = Get-VBRAzureBlobContainer -Connection $connect
+$container = Get-VBRAzureBlobContainer -Connection $connect | Where {$_.name -Match "bootdiagnostics-vcc*"}
 New-VBRAzureBlobFolder -Container $container -Connection $connect -Name "VeeamObject"
 New-VBRAzureBlobFolder -Container $container -Connection $connect -Name "VeeamExternal"
 $folder1 = Get-VBRAzureBlobFolder -Container $container -Connection $connect -Name "VeeamObject"
